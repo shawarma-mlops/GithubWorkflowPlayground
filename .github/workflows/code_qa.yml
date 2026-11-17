@@ -1,0 +1,33 @@
+name: "Code QA: Mypy & Ruff"
+
+on:
+  push:
+    branches: [ "*" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+    code_qa:
+        runs-on: ubuntu-latest
+        steps:
+        - name: Checkout repository
+          uses: actions/checkout@v3
+
+        - name: Install uv
+          uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+          with:
+            version: "0.13.9"
+
+        - name: Set up Python 
+          run: uv install python
+
+        - name: Install dependencies
+          run: uv sync --locked --all-extras --dev
+
+        - name: Run Mypy
+          run: |
+            mypy --strict ./shawarma_mlops | python3 .github/workflows/mypy_ruff_filtering.py --mypy-output
+        
+        - name: Run Ruff
+          run: |
+            ruff check ./shawarma_mlops | python3 .github/workflows/mypy_ruff_filtering.py --ruff-output
