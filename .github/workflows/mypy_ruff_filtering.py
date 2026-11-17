@@ -8,7 +8,7 @@ import re
 import sys
 
 
-def parse_ruff(output: str) -> None:
+def parse_ruff(output: str) -> int:
     """
     Parse Ruff output and print it in a format that GitHub Actions can parse and display as annotations.
     """
@@ -18,16 +18,22 @@ def parse_ruff(output: str) -> None:
             file_path, line_number, column_number, message = match.groups()
             print(f"::warning file={file_path},line={line_number},col={column_number}::{message}")
 
+    # Ruff warnings do not block a merge
+    return 0
 
-def parse_mypy(output: str) -> None:
+
+def parse_mypy(output: str) -> int:
     """
     Parse Mypy output and print it in a format that GitHub Actions can parse and display as annotations.
     """
+    return_code = 0
     for line in output.splitlines():
         match = re.match(r"(.+):(\d+): (.+)", line)
         if match:
             file_path, line_number, message = match.groups()
             print(f"::error file={file_path},line={line_number}::{message}")
+            return_code = 1
+    return return_code
 
 
 def main() -> None:
@@ -58,11 +64,13 @@ def main() -> None:
         sys.exit(1)
 
     stdin = sys.stdin.read()
+    return_code = 0
     if args.ruff_output:
-        parse_ruff(stdin)
+        return_code = parse_ruff(stdin)
     elif args.mypy_output:
-        parse_mypy(stdin)
+        return_code = parse_mypy(stdin)
 
+    sys.exit(return_code)
 
 if __name__ == "__main__":
     main()
