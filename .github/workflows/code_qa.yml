@@ -26,8 +26,8 @@ jobs:
 
         - name: Run Mypy
           run: |
-            uv run mypy --strict ./shawarma_mlops
+            uv run mypy --strict ./shawarma_mlops | python3 .github/workflows/mypy_ruff_filtering.py --mypy-output
         
         - name: Run Ruff
           run: |
-            uv run ruff check ./shawarma_mlops
+            uv run ruff check ./shawarma_mlops | python3 .github/workflows/mypy_ruff_filtering.py --ruff-output
