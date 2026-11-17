@@ -1,5 +1,5 @@
 name: "Code QA: Mypy & Ruff"
-run-name: "${{ github.ref }} Code QA for ${{ github.actor }}"
+run-name: "Code QA on ${{ github.ref }} by ${{ github.actor }}"
 
 on:
   push:
