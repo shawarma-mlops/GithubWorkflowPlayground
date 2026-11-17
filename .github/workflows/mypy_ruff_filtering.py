@@ -12,11 +12,15 @@ def parse_ruff(output: str) -> int:
     """
     Parse Ruff output and print it in a format that GitHub Actions can parse and display as annotations.
     """
-    for line in output.splitlines():
-        match = re.match(r"(.+):(\d+):(\d+): (.+)", line)
-        if match:
-            file_path, line_number, column_number, message = match.groups()
-            print(f"::warning file={file_path},line={line_number},col={column_number}::{message}")
+    pattern = re.compile(
+        r"^(?P<code>[A-Z]+\d+)\s+(?P<message>.+?)\n"
+        r"\s*-->\s*(?P<file>.+?):(?P<line>\d+):(?P<column>\d+)$",
+        re.MULTILINE | re.DOTALL,
+    )
+    matches = pattern.findall(output)
+    for match in matches:
+        code, message, file_path, line_number, column_number = match
+        print(f"::warning file={file_path},line={line_number},col={column_number}::{code} {message}")
 
     # Ruff warnings do not block a merge
     return 0

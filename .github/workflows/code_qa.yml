@@ -24,10 +24,11 @@ jobs:
         - name: Install dependencies
           run: uv sync --locked --all-extras --dev
 
-        - name: Run Mypy
-          run: |
-            uv run mypy --strict ./shawarma_mlops | python3 .github/workflows/mypy_ruff_filtering.py --mypy-output
-        
-        - name: Run Ruff
+        - name: Ruff
           run: |
             uv run ruff check ./shawarma_mlops | python3 .github/workflows/mypy_ruff_filtering.py --ruff-output
+
+        - name: Mypy
+          run: |
+            uv run mypy --strict ./shawarma_mlops | python3 .github/workflows/mypy_ruff_filtering.py --mypy-output
+
