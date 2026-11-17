@@ -7,9 +7,6 @@ from loguru import logger
 # Load environment variables from .env file if it exists
 load_dotenv()
 
-# very long line to trigger a ruff warning
-print("This is a very long line that is intentionally written to exceed the maximum line length limit set by the linter, which should trigger a warning in Ruff and Mypy.")
-
 MODEL_VERSION = 1
 
 # Paths
